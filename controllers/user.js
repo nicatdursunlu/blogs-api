@@ -1,6 +1,6 @@
+const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
 const User = require('../models/user')
-const Session = require('../models/session')
 
 const SALT = process.env.PASSWORD_SALT
 
@@ -26,17 +26,16 @@ const loginUser = async (req, res) => {
     .toString('hex')
 
   const user = await User.findOne({ email, password: hashedPassword })
-  const accessToken = crypto.randomBytes(32).toString('base64')
-
-  const session = new Session({
-    user: user._id,
-    accessToken,
-    expiresAt: Date.now() + 1000 * 60 * 60 * 24,
-  })
-
-  await session.save()
 
   if (user) {
+    const { password, ...rest } = user.toObject()
+    const accessToken = jwt.sign(
+      {
+        data: rest,
+        exp: Math.floor(Date.now() / 100) + 60 * 60 * 24,
+      },
+      process.env.JWT_SECRET_KEY
+    )
     res.send({
       accessToken,
     })
