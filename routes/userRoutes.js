@@ -7,5 +7,7 @@ const imageUpload = upload.single('image')
 
 userRouter.post('/register', imageUpload, userController.registerUser)
 userRouter.post('/login', userController.loginUser)
+userRouter.patch('/password', userController.resetPassword)
+userRouter.post('/password/request-reset', userController.requestPasswordReset)
 
 module.exports = userRouter
