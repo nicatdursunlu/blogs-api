@@ -5,8 +5,7 @@ const mongoose = require('mongoose')
 const userRoutes = require('./routes/userRoutes')
 const blogRoutes = require('./routes/blogRoutes')
 
-const CONNECTION_STRING =
-  'mongodb+srv://nijatdursunlu:dursunlunicat55@cluster0.vnhevzw.mongodb.net/blog-app?retryWrites=true&w=majority'
+const CONNECTION_STRING = process.env.DB_CONNECTION_STRING
 mongoose.connect(CONNECTION_STRING)
 
 const app = express()
