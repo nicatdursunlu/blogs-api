@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const crypto = require('crypto')
 
-const SALT = '12345'
+const SALT = process.env.PASSWORD_SALT
 
 const UserSchema = new mongoose.Schema({
   firstName: String,
