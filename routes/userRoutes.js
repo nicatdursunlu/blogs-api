@@ -3,6 +3,7 @@ const multer = require('multer')
 const crypto = require('crypto')
 
 const User = require('../models/user')
+const Session = require('../models/session')
 
 const SALT = '12345'
 
@@ -53,6 +54,15 @@ router.post('/login', async (req, res) => {
 
   const user = await User.findOne({ email, password: hashedPassword })
   const accessToken = crypto.randomBytes(32).toString('base64')
+
+  const session = new Session({
+    user: user._id,
+    accessToken,
+    expiresAt: Date.now() + 1000 * 60 * 60 * 24,
+  })
+
+  await session.save()
+
   if (user) {
     res.send({ accessToken })
   } else {
