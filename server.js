@@ -3,6 +3,8 @@ const app = require('./app')
 
 const server = http.createServer(app)
 
-server.listen(8080, () => {
+const PORT = process.env.PORT || 8080
+
+server.listen(PORT, () => {
   console.log('HTTP server is running on port 8080')
 })
