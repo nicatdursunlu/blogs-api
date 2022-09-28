@@ -6,7 +6,9 @@ const SessionSchema = new mongoose.Schema({
     ref: 'users',
   },
   accessToken: String,
-  expiresAt: Date,
+  ip: String,
+  os: String,
+  browser: String,
   createdAt: {
     type: Date,
     default: Date.now,

@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken')
 
 const authMiddleware = async (req, res, next) => {
-  const token = req.headers['authorization']
+  const authHeader = req.headers['authorization']
+  const token = authHeader.replace('Bearer ', '')
 
   if (token) {
     jwt.verify(token, process.env.JWT_SECRET_KEY, (error, decoded) => {
@@ -11,12 +12,13 @@ const authMiddleware = async (req, res, next) => {
         })
         return
       }
-      if (decoded.exp < Date.now() / 1000) {
+      const { exp, iat, ...userData } = decoded
+      if (exp < Date.now() / 1000) {
         res.status(401).send({
           message: 'Your session has expired!',
         })
       } else {
-        req.user = decoded.data
+        req.user = userData
         next()
       }
     })

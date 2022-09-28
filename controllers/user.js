@@ -8,6 +8,16 @@ const SALT = process.env.PASSWORD_SALT
 const registerUser = async (req, res) => {
   const { path } = req.file
   const { firstName, lastName, password, email } = req.body
+
+  const existingUser = User.findOne({ email })
+
+  if (existingUser) {
+    res.status(400).send({
+      message: 'User with this email already exists!',
+    })
+    return
+  }
+
   const user = new User({
     firstName,
     lastName,
@@ -27,16 +37,15 @@ const loginUser = async (req, res) => {
     .toString('hex')
 
   const user = await User.findOne({ email, password: hashedPassword })
+    .select('_id firstName lastName email image')
+    .exec()
 
   if (user) {
     const { password, ...rest } = user.toObject()
-    const accessToken = jwt.sign(
-      {
-        data: rest,
-        exp: Math.floor(Date.now() / 100) + 60 * 60 * 24,
-      },
-      process.env.JWT_SECRET_KEY
-    )
+    const accessToken = jwt.sign(user.toObject(), process.env.JWT_SECRET_KEY, {
+      expiresIn: '24h',
+    })
+
     res.send({
       accessToken,
     })

@@ -1,12 +1,16 @@
 const Blog = require('../models/blog')
 
 const getBlogList = async (req, res) => {
-  const blogs = await Blog.find().populate('author').exec()
+  const blogs = await Blog.find()
+    .populate('author', '_id firstName lastName email image')
+    .exec()
   res.status(200).send(blogs)
 }
 
 const getSingleBlog = async (req, res) => {
-  const blog = await Blog.findById(req.params.id).populate('author').exec()
+  const blog = await Blog.findById(req.params.id)
+    .populate('author', '_id firstName lastName email image')
+    .exec()
   res.status(200).send(blog)
 }
 
