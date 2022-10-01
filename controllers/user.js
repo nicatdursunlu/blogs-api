@@ -9,7 +9,7 @@ const registerUser = async (req, res) => {
   const { path } = req.file
   const { firstName, lastName, password, email } = req.body
 
-  const existingUser = User.findOne({ email })
+  const existingUser = await User.findOne({ email })
 
   if (existingUser) {
     res.status(400).send({

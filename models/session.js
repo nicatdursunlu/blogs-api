@@ -9,6 +9,10 @@ const SessionSchema = new mongoose.Schema({
   ip: String,
   os: String,
   browser: String,
+  terminated: {
+    type: Boolean,
+    default: () => false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

@@ -1,34 +1,35 @@
 const Blog = require('../models/blog')
+const catchError = require('../utils/catchError')
 
-const getBlogList = async (req, res) => {
+const getBlogList = catchError(async (req, res) => {
   const blogs = await Blog.find()
     .populate('author', '_id firstName lastName email image')
     .exec()
   res.status(200).send(blogs)
-}
+})
 
-const getSingleBlog = async (req, res) => {
+const getSingleBlog = catchError(async (req, res, next) => {
   const blog = await Blog.findById(req.params.id)
     .populate('author', '_id firstName lastName email image')
     .exec()
   res.status(200).send(blog)
-}
+})
 
-const insertBlog = async (req, res) => {
+const insertBlog = catchError(async (req, res) => {
   const blog = new Blog({
     ...req.body,
     author: req.user._id,
   })
   await blog.save()
   res.status(201).send()
-}
+})
 
-const updateBlog = async (req, res) => {
+const updateBlog = catchError(async (req, res) => {
   await Blog.findByIdAndUpdate(req.params.id, req.body)
   res.status(200).send()
-}
+})
 
-const deleteBlog = async (req, res) => {
+const deleteBlog = catchError(async (req, res) => {
   const blog = await Blog.findById(req.params.id)
 
   if (blog.author !== req.user._id) {
@@ -40,7 +41,7 @@ const deleteBlog = async (req, res) => {
 
   await Blog.findByIdAndDelete(req.params.id)
   res.status(204).send()
-}
+})
 
 module.exports = {
   getBlogList,
