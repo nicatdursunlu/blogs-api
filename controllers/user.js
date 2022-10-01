@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
 const User = require('../models/user')
 const PasswordReset = require('../models/passwordReset')
+const catchError = require('../utils/catchError')
 
 const SALT = process.env.PASSWORD_SALT
 
@@ -29,7 +30,7 @@ const registerUser = async (req, res) => {
   res.status(201).send()
 }
 
-const loginUser = async (req, res) => {
+const loginUser = catchError(async (req, res) => {
   const { email, password } = req.body
 
   const hashedPassword = crypto
@@ -54,9 +55,9 @@ const loginUser = async (req, res) => {
       message: 'Username or password is not correct!',
     })
   }
-}
+})
 
-const requestPasswordReset = async (req, res) => {
+const requestPasswordReset = catchError(async (req, res) => {
   const { email } = req.body
   const user = await User.findOne({ email })
 
@@ -69,9 +70,9 @@ const requestPasswordReset = async (req, res) => {
   res.send({
     message: 'Email has been sent to you to reset your password!',
   })
-}
+})
 
-const resetPassword = async (req, res) => {
+const resetPassword = catchError(async (req, res) => {
   const { newPassword, resetToken } = req.body
 
   const hashedPassword = crypto
@@ -95,7 +96,7 @@ const resetPassword = async (req, res) => {
       message: 'This password reset request does not exist!',
     })
   }
-}
+})
 
 module.exports = {
   registerUser,
