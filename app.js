@@ -27,6 +27,7 @@ app.use(limiter)
 app.use(helmet())
 app.use(mongoSanitize())
 app.use(xss())
+app.use(cors())
 
 app.use('/public', express.static(path.resolve('public')))
 app.use('/api/v1/', userRoutes)
