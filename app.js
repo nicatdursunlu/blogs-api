@@ -11,6 +11,7 @@ const cors = require('cors')
 const userRoutes = require('./routes/userRoutes')
 const blogRoutes = require('./routes/blogRoutes')
 const errorMiddleware = require('./middleware/error')
+const notFound = require('./middleware/notFound')
 
 const CONNECTION_STRING = process.env.DB_CONNECTION_STRING
 mongoose.connect(CONNECTION_STRING)
@@ -32,12 +33,8 @@ app.use(cors())
 app.use('/public', express.static(path.resolve('public')))
 app.use('/api/v1/', userRoutes)
 app.use('/api/v1/blogs', blogRoutes)
-app.all('*', (req, res) => {
-  res.status(404).send({
-    message: 'Requested URl not found!',
-  })
-})
 
+app.all('*', notFound)
 app.use(errorMiddleware)
 
 module.exports = app
