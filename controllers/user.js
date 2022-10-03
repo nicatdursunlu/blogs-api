@@ -18,7 +18,7 @@ const checkUserEmail = async (req, res) => {
   }
 }
 
-const registerUser = async (req, res) => {
+const registerUser = catchError(async (req, res) => {
   const { path } = req.file
   const { firstName, lastName, password, email } = req.body
 
@@ -32,6 +32,10 @@ const registerUser = async (req, res) => {
   await user.save()
 
   res.status(201).send()
+})
+
+const getUserInfo = (req, res) => {
+  res.status(200).send(req.user)
 }
 
 const loginUser = catchError(async (req, res) => {
@@ -46,14 +50,16 @@ const loginUser = catchError(async (req, res) => {
     .exec()
 
   if (user) {
-    const { password, ...rest } = user.toObject()
     const accessToken = jwt.sign(user.toObject(), process.env.JWT_SECRET_KEY, {
       expiresIn: '24h',
     })
 
-    res.send({
-      accessToken,
+    res.cookie('app-access-token', accessToken, {
+      maxAge: 60 * 60 * 12 * 1000, // 12h
+      httpOnly: true,
     })
+
+    res.status(200).send()
   } else {
     res.status(401).send({
       message: 'Username or password is not correct!',
@@ -147,4 +153,5 @@ module.exports = {
   requestPasswordReset,
   resetPassword,
   checkUserEmail,
+  getUserInfo,
 }

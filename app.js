@@ -7,6 +7,7 @@ const helmet = require('helmet')
 const xss = require('xss-clean')
 const mongoSanitize = require('express-mongo-sanitize')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 
 const userRoutes = require('./routes/userRoutes')
 const blogRoutes = require('./routes/blogRoutes')
@@ -28,7 +29,13 @@ app.use(limiter)
 app.use(helmet())
 app.use(mongoSanitize())
 app.use(xss())
-app.use(cors())
+app.use(cookieParser())
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+)
 
 app.use('/public', express.static(path.resolve('public')))
 app.use('/api/v1/', userRoutes)

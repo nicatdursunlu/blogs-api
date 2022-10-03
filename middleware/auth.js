@@ -1,18 +1,10 @@
 const jwt = require('jsonwebtoken')
 
 const authMiddleware = async (req, res, next) => {
-  const authHeader = req.headers['authorization']
+  const token = req.cookies['app-access-token']
 
-  if (!authHeader) {
-    res.status(401).send({
-      message: 'Unauthorized request!',
-    })
-    return
-  }
-
-  const token = authHeader.replace('Bearer ', '')
   if (token) {
-    jwt.verify(token, process.env.JWT_SECRET_KEY, (error, decoded) => {
+    jwt.verify(token, process.env.JWT_SECRET_KEY, function (error, decoded) {
       if (error) {
         res.status(401).send({
           message: error.message,
