@@ -6,18 +6,21 @@ const PasswordReset = require('../models/passwordReset')
 const catchError = require('../utils/catchError')
 const SALT = process.env.PASSWORD_SALT
 
-const registerUser = async (req, res) => {
-  const { path } = req.file
-  const { firstName, lastName, password, email } = req.body
-
-  const existingUser = await User.findOne({ email })
+const checkUserEmail = async (req, res) => {
+  const existingUser = await User.findOne({ email: req.body.email })
 
   if (existingUser) {
     res.status(400).send({
       message: 'User with this email already exists!',
     })
-    return
+  } else {
+    next()
   }
+}
+
+const registerUser = async (req, res) => {
+  const { path } = req.file
+  const { firstName, lastName, password, email } = req.body
 
   const user = new User({
     firstName,
@@ -27,6 +30,7 @@ const registerUser = async (req, res) => {
     image: path,
   })
   await user.save()
+
   res.status(201).send()
 }
 
@@ -142,4 +146,5 @@ module.exports = {
   loginUser,
   requestPasswordReset,
   resetPassword,
+  checkUserEmail,
 }
