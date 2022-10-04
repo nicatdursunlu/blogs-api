@@ -55,7 +55,7 @@ const loginUser = catchError(async (req, res) => {
     })
 
     res.cookie('app-access-token', accessToken, {
-      maxAge: 60 * 60 * 12 * 1000, // 12h
+      maxAge: 60 * 60 * 24 * 1000, //24h
       httpOnly: true,
     })
 
@@ -147,6 +147,11 @@ const resetPassword = catchError(async (req, res) => {
   }
 })
 
+const logout = catchError(async (req, res) => {
+  res.clearCookie('app-access-token')
+  res.status(200).send()
+})
+
 module.exports = {
   registerUser,
   loginUser,
@@ -154,4 +159,5 @@ module.exports = {
   resetPassword,
   checkUserEmail,
   getUserInfo,
+  logout,
 }

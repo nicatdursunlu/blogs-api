@@ -26,7 +26,7 @@ const limiter = rateLimit({
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json({ limit: '16kb' }))
 app.use(limiter)
-app.use(helmet())
+app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
 app.use(mongoSanitize())
 app.use(xss())
 app.use(cookieParser())
