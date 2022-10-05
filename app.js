@@ -1,6 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const path = require('path')
+const passport = require('passport')
 const mongoose = require('mongoose')
 const rateLimit = require('express-rate-limit')
 const helmet = require('helmet')
@@ -20,7 +21,7 @@ mongoose.connect(CONNECTION_STRING)
 const app = express()
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: 1000,
 })
 
 app.use(express.urlencoded({ extended: true }))
@@ -28,6 +29,7 @@ app.use(express.json({ limit: '16kb' }))
 app.use(limiter)
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }))
 app.use(mongoSanitize())
+app.use(passport.initialize())
 app.use(xss())
 app.use(cookieParser())
 app.use(

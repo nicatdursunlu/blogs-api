@@ -1,23 +1,24 @@
 const mongoose = require('mongoose')
 
-const SessionSchema = new mongoose.Schema({
-  user: {
-    type: 'ObjectId',
-    ref: 'users',
+const SessionSchema = new mongoose.Schema(
+  {
+    user: {
+      type: 'ObjectId',
+      ref: 'users',
+    },
+    accessToken: String,
+    ip: String,
+    os: String,
+    browser: String,
+    terminated: {
+      type: Boolean,
+      default: () => false,
+    },
   },
-  accessToken: String,
-  ip: String,
-  os: String,
-  browser: String,
-  terminated: {
-    type: Boolean,
-    default: () => false,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-})
+  {
+    timestamps: true,
+  }
+)
 
 const SessionModel = mongoose.model('sessions', SessionSchema)
 
