@@ -3,7 +3,8 @@ const catchError = require('../utils/catchError')
 
 const getBlogList = catchError(async (req, res) => {
   const blogs = await Blog.find()
-    .populate('author', '_id firstName lastName email image')
+    .select('_id title body likes')
+    .populate('author', '_id firstName lastName image')
     .exec()
   res.status(200).send(blogs)
 })
