@@ -2,11 +2,32 @@ const Blog = require('../models/blog')
 const catchError = require('../utils/catchError')
 
 const getBlogList = catchError(async (req, res) => {
-  const blogs = await Blog.find()
-    .select('_id title body likes')
+  const { page = 1, limit = 10, q = '' } = req.query
+
+  const userId = req.user._id
+  const offset = (page - 1) * limit
+  const titleFilter = { $regex: '.*' + q + '.*', $options: 'i' }
+
+  const blogs = await Blog.find({
+    title: titleFilter,
+  })
+    .select('_id title body tags likes')
+    .where('author')
+    .equals(userId)
     .populate('author', '_id firstName lastName image')
+    .sort({ createdAt: 'desc' })
+    .skip(offset)
+    .limit(limit)
     .exec()
-  res.status(200).send(blogs)
+
+  const total = await Blog.find({
+    title: titleFilter,
+  })
+    .where('author')
+    .equals(userId)
+    .count()
+
+  res.status(200).send({ list: blogs, total })
 })
 
 const getSingleBlog = catchError(async (req, res, next) => {
