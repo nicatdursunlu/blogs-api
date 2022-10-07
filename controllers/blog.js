@@ -51,6 +51,17 @@ const updateBlog = catchError(async (req, res) => {
   res.status(200).send()
 })
 
+const likeBlog = catchError(async (req, res) => {
+  const blog = await Blog.findById(req.params.id)
+  if (blog.likes.includes(req.user._id)) {
+    blog.likes.pull(req.user._id)
+  } else {
+    blog.likes.push(req.user._id)
+  }
+  await blog.save()
+  res.status(200).send()
+})
+
 const deleteBlog = catchError(async (req, res) => {
   const blog = await Blog.findById(req.params.id)
 
@@ -71,4 +82,5 @@ module.exports = {
   insertBlog,
   updateBlog,
   deleteBlog,
+  likeBlog,
 }

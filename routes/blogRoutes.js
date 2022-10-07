@@ -9,6 +9,7 @@ blogRouter.get('/', blogController.getBlogList)
 blogRouter.get('/:id', blogController.getSingleBlog)
 blogRouter.post('/', blogController.insertBlog)
 blogRouter.put('/:id', blogController.updateBlog)
+blogRouter.put('/:id/like', blogController.likeBlog)
 blogRouter.delete('/:id', blogController.deleteBlog)
 
 module.exports = blogRouter
